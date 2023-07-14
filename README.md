@@ -1,3 +1,3 @@
 # CompmoseLearning
 Studying the Сompose
-*First Compose Project
+* First Compose Project

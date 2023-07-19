@@ -4,3 +4,4 @@ Studying the Сompose
 * Preview and Column
 * Row, Box, Modifier
 * Instagram profile card. Create template.
+* Dark and light theme

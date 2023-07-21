@@ -4,20 +4,23 @@ import InstagramProfileCard
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.graphics.painter.ColorPainter
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.dp
 import com.example.firstcompmoseproject.ui.theme.FirstCompmoseProjectTheme
 
 class MainActivity : ComponentActivity() {
@@ -30,7 +33,7 @@ class MainActivity : ComponentActivity() {
                         .fillMaxSize()
                         .background(MaterialTheme.colors.background)
                 ) {
-                    InstagramProfileCard()
+                    testText()
                 }
             }
         }
@@ -40,34 +43,23 @@ class MainActivity : ComponentActivity() {
 @Preview
 @Composable
 fun testText() {
-    Column() {
-        Text("Hello World!", fontWeight = FontWeight.Bold, fontSize = 25.sp)
-        Text(buildAnnotatedString {
-            withStyle(
-                style = SpanStyle(
-                    textDecoration = TextDecoration.combine(
-                        listOf(
-                            TextDecoration.Underline,
-                            TextDecoration.LineThrough
-                        )
-                    )
-                )
-            ) {
-               append("He")
-            }
-
-            withStyle(
-                style = SpanStyle(
-                    color = Color.Red,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.ExtraBold
-                    )
-                )
-             {
-                append("llo")
-            }
-
-        })
+    Box(
+        modifier = Modifier
+            .size(200.dp)
+            .background(Color.Cyan)
+    ) {
+        Image(
+            modifier = Modifier
+                .background(Color.Green)
+                .padding(25.dp)
+                .clip(CircleShape)
+                .size(100.dp)
+                .background(Color.Red)
+                .padding(25.dp),
+            painter = ColorPainter(color = Color.Yellow),
+            contentDescription = null,
+            contentScale = ContentScale.FillHeight
+        )
     }
 
 }

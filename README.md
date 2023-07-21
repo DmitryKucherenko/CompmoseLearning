@@ -5,3 +5,4 @@ Studying the Сompose
 * Row, Box, Modifier
 * Instagram profile card. Create template.
 * Dark and light theme
+* Modifier order

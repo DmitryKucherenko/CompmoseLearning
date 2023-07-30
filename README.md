@@ -6,4 +6,6 @@ Studying the Сompose
 * Instagram profile card. Create template.
 * Dark and light theme
 * Modifier order
-* VkClient
+* VkClient templates: Header, Card
+* Material Components
+* ViewModel

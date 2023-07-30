@@ -21,11 +21,16 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelProvider
+import com.example.firstcompmoseproject.ui.MainViewModel
 import com.example.firstcompmoseproject.ui.theme.FirstCompmoseProjectTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val viewModel = ViewModelProvider(this)[MainViewModel::class.java]
+
         setContent {
             FirstCompmoseProjectTheme {
                 Box(
@@ -33,34 +38,12 @@ class MainActivity : ComponentActivity() {
                         .fillMaxSize()
                         .background(MaterialTheme.colors.background)
                 ) {
-                    testText()
+                   InstagramProfileCard(viewModel)
                 }
             }
         }
     }
 }
 
-@Preview
-@Composable
-fun testText() {
-    Box(
-        modifier = Modifier
-            .size(200.dp)
-            .background(Color.Cyan)
-    ) {
-        Image(
-            modifier = Modifier
-                .background(Color.Green)
-                .padding(25.dp)
-                .clip(CircleShape)
-                .size(100.dp)
-                .background(Color.Red)
-                .padding(25.dp),
-            painter = ColorPainter(color = Color.Yellow),
-            contentDescription = null,
-            contentScale = ContentScale.FillHeight
-        )
-    }
 
-}
 

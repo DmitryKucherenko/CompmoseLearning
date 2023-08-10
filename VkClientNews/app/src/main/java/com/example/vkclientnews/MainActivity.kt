@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelProvider
 import com.example.vkclientnews.ui.theme.MainScreen
 import com.example.vkclientnews.ui.theme.PostCard
 import com.example.vkclientnews.ui.theme.VkClientNewsTheme
@@ -25,9 +26,10 @@ import com.example.vkclientnews.ui.theme.VkClientNewsTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+      val viewModel = ViewModelProvider(this)[MainViewModel::class.java]
         setContent {
            VkClientNewsTheme() {
-               MainScreen()
+               MainScreen(viewModel)
            }
 
         }

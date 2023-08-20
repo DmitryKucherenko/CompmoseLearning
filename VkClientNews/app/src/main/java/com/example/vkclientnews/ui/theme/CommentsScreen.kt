@@ -8,56 +8,66 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ModifierInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.vkclientnews.CommentsViewModel
+import com.example.vkclientnews.CommentsViewModelFactory
 import com.example.vkclientnews.domain.FeedPost
 import com.example.vkclientnews.domain.PostComment
 
 @Composable
 fun CommentsScreen(
-    feedPost: FeedPost,
-    comments: List<PostComment>,
-    onBackPressed: () -> Unit
+    onBackPressed: () -> Unit,
+    feedPost:FeedPost
 ) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(text = "Comments for FeedPost Id: ${feedPost.id}")
-                },
-                navigationIcon = {
-                    IconButton(onClick = {
-                        onBackPressed()
-                    }) {
-                        Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = null)
-                    }
-                }
-            )
-        }
-    ) { paddinValues ->
-        LazyColumn(
-            modifier = Modifier.padding(paddinValues),
-            contentPadding = PaddingValues(
-                top = 16.dp,
-                start = 8.dp,
-                end = 8.dp,
-                bottom = 72.dp
-            )
-        ) {
-            items(
-                items = comments,
-                key = { it.id }
-            ) { comment ->
-                CommentItem(comment = comment)
+    val viewModel: CommentsViewModel = viewModel(
+        factory = CommentsViewModelFactory(feedPost)
+    )
+    val screenState = viewModel.screenState.observeAsState(CommentsScreenState.Initial)
+    val curentState = screenState.value
 
-            }
-        }
+   if(curentState is CommentsScreenState.Comments) {
+       Scaffold(
+           topBar = {
+               TopAppBar(
+                   title = {
+                       Text(text = "Comments for FeedPost Id: ${curentState.feedPost.id}")
+                   },
+                   navigationIcon = {
+                       IconButton(onClick = {
+                           onBackPressed()
+                       }) {
+                           Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = null)
+                       }
+                   }
+               )
+           }
+       ) { paddinValues ->
+           LazyColumn(
+               modifier = Modifier.padding(paddinValues),
+               contentPadding = PaddingValues(
+                   top = 16.dp,
+                   start = 8.dp,
+                   end = 8.dp,
+                   bottom = 72.dp
+               )
+           ) {
+               items(
+                   items = curentState.comments,
+                   key = { it.id }
+               ) { comment ->
+                   CommentItem(comment = comment)
 
-    }
+               }
+           }
+
+       }
+   }
 }
 
 @Composable

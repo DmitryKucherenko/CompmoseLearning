@@ -23,51 +23,50 @@ import com.example.vkclientnews.domain.PostComment
 @Composable
 fun CommentsScreen(
     onBackPressed: () -> Unit,
-    feedPost:FeedPost
+    feedPost: FeedPost,
 ) {
     val viewModel: CommentsViewModel = viewModel(
         factory = CommentsViewModelFactory(feedPost)
     )
     val screenState = viewModel.screenState.observeAsState(CommentsScreenState.Initial)
-    val curentState = screenState.value
+    val currentState = screenState.value
 
-   if(curentState is CommentsScreenState.Comments) {
-       Scaffold(
-           topBar = {
-               TopAppBar(
-                   title = {
-                       Text(text = "Comments for FeedPost Id: ${curentState.feedPost.id}")
-                   },
-                   navigationIcon = {
-                       IconButton(onClick = {
-                           onBackPressed()
-                       }) {
-                           Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = null)
-                       }
-                   }
-               )
-           }
-       ) { paddinValues ->
-           LazyColumn(
-               modifier = Modifier.padding(paddinValues),
-               contentPadding = PaddingValues(
-                   top = 16.dp,
-                   start = 8.dp,
-                   end = 8.dp,
-                   bottom = 72.dp
-               )
-           ) {
-               items(
-                   items = curentState.comments,
-                   key = { it.id }
-               ) { comment ->
-                   CommentItem(comment = comment)
-
-               }
-           }
-
-       }
-   }
+    if (currentState is CommentsScreenState.Comments) {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = {
+                        Text(text = "Comments for FeedPost Id: ${currentState.feedPost.contentText}")
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = { onBackPressed() }) {
+                            Icon(
+                                imageVector = Icons.Filled.ArrowBack,
+                                contentDescription = null
+                            )
+                        }
+                    }
+                )
+            }
+        ) { paddingValues ->
+            LazyColumn(
+                modifier = Modifier.padding(paddingValues),
+                contentPadding = PaddingValues(
+                    top = 16.dp,
+                    start = 8.dp,
+                    end = 8.dp,
+                    bottom = 72.dp
+                )
+            ) {
+                items(
+                    items = currentState.comments,
+                    key = { it.id }
+                ) { comment ->
+                    CommentItem(comment = comment)
+                }
+            }
+        }
+    }
 }
 
 @Composable
@@ -98,7 +97,7 @@ private fun CommentItem(
             Text(
                 text = comment.commentText,
                 color = MaterialTheme.colors.onPrimary,
-                fontSize = 12.sp
+                fontSize = 14.sp
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
@@ -113,10 +112,9 @@ private fun CommentItem(
 @Preview
 @Composable
 private fun PreviewComment() {
-    VkClientNewsTheme() {
+    VkClientNewsTheme {
         CommentItem(comment = PostComment(id = 0))
     }
-
 }
 
 

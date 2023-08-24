@@ -19,23 +19,15 @@ fun AppNavGraph(
         navController = navHostController,
         startDestination = Screen.Home.route
     ) {
-
         homeScreenNavGraph(
             newsFeedScreenContent = newsFeedScreenContent,
             commentsScreenContent = commentsScreenContent
         )
-
-        composable(
-            Screen.Favourite.route
-        ) {
+        composable(Screen.Favourite.route) {
             favouriteScreenContent()
         }
-
-        composable(
-            Screen.Profile.route
-        ) {
+        composable(Screen.Profile.route) {
             profileScreenContent()
         }
-
     }
 }

@@ -17,32 +17,30 @@ import com.example.vkclientnews.navigation.AppNavGraph
 import com.example.vkclientnews.navigation.Screen
 import com.example.vkclientnews.navigation.rememberNavigationState
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun MainScreen() {
-
     val navigationState = rememberNavigationState()
-
-
 
     Scaffold(
         bottomBar = {
             BottomNavigation {
                 val navBackStackEntry by navigationState.navHostController.currentBackStackEntryAsState()
+
                 val items = listOf(
                     NavigationItem.Home,
                     NavigationItem.Favourite,
                     NavigationItem.Profile
                 )
                 items.forEach { item ->
+
                     val selected = navBackStackEntry?.destination?.hierarchy?.any {
                         it.route == item.screen.route
                     } ?: false
+
                     BottomNavigationItem(
                         selected = selected,
                         onClick = {
-                            if(!selected) {
+                            if (!selected) {
                                 navigationState.navigateTo(item.screen.route)
                             }
                         },
@@ -61,7 +59,6 @@ fun MainScreen() {
     ) { paddingValues ->
         AppNavGraph(
             navHostController = navigationState.navHostController,
-
             newsFeedScreenContent = {
                 HomeScreen(
                     paddingValues = paddingValues,
@@ -70,17 +67,17 @@ fun MainScreen() {
                     }
                 )
             },
-            favouriteScreenContent = { TextCounter(name = "Favourite") },
-            profileScreenContent = { TextCounter(name = "Profile") },
-            commentsScreenContent = {feedPost ->
+            commentsScreenContent = { feedPost ->
                 CommentsScreen(
-                    onBackPressed = { navigationState.navHostController.popBackStack() },
+                    onBackPressed = {
+                        navigationState.navHostController.popBackStack()
+                    },
                     feedPost = feedPost
-
                 )
-            }
+            },
+            favouriteScreenContent = { TextCounter(name = "Favourite") },
+            profileScreenContent = { TextCounter(name = "Profile") }
         )
-
     }
 }
 

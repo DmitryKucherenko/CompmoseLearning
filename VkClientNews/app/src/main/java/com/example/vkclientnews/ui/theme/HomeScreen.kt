@@ -25,9 +25,9 @@ import com.example.vkclientnews.domain.FeedPost
 @Composable
 fun HomeScreen(
     paddingValues: PaddingValues,
-    onCommentClickListener:(FeedPost)->Unit
+    onCommentClickListener: (FeedPost) -> Unit
 ) {
-    val viewModel:NewsFeedViewModel = viewModel()
+    val viewModel: NewsFeedViewModel = viewModel()
     val screenState = viewModel.screenState.observeAsState(NewsFeedScreenState.Initial)
 
     when (val currentState = screenState.value) {
@@ -39,22 +39,20 @@ fun HomeScreen(
                 onCommentClickListener = onCommentClickListener
             )
         }
+        NewsFeedScreenState.Initial -> {
 
-        is NewsFeedScreenState.Initial -> {}
+        }
     }
-
 }
-
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable
 private fun FeedPosts(
-    posts: List<FeedPost>,
     viewModel: NewsFeedViewModel,
     paddingValues: PaddingValues,
-    onCommentClickListener:(FeedPost)->Unit
+    posts: List<FeedPost>,
+    onCommentClickListener: (FeedPost) -> Unit
 ) {
-
     LazyColumn(
         modifier = Modifier.padding(paddingValues),
         contentPadding = PaddingValues(
@@ -98,5 +96,4 @@ private fun FeedPosts(
             }
         }
     }
-
 }

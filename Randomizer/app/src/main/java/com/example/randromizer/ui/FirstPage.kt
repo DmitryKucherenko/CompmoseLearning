@@ -12,11 +12,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.example.randromizer.navigation.AppNavGraph
+import com.example.randromizer.navigation.Screen
+import com.example.randromizer.navigation.rememberNavigationState
 
 
 @Preview
 @Composable
 fun FirstPage() {
+    val navigationState = rememberNavigationState()
     var numberOne by remember {
         mutableStateOf(0)
     }
@@ -25,11 +31,25 @@ fun FirstPage() {
         mutableStateOf(0)
     }
 
-    Column(modifier = Modifier
-        .fillMaxSize(),
+    Column(
+        modifier = Modifier
+            .fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
+        AppNavGraph(
+            navHostController = navigationState.navHostController,
+            firstPage = {
+                FirstPage()
+            },
+            secondPage = {
+                SecondPage(onBackPressed = {
+                    navigationState.navHostController.popBackStack()
+                })
+            }
+        )
+
         TextField(
             value = numberOne.toString(),
             onValueChange = { inputNumber: String -> numberOne = inputNumber.toIntOrNull() ?: 0 },
@@ -44,8 +64,11 @@ fun FirstPage() {
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
         )
 
-        Button(onClick = { }) {
-            Text(text="Generate")
+        Button(onClick = {
+            navigationState.navigateTo(Screen.SECOND_PAGE)
+        }) {
+            Text(text = "Generate")
         }
     }
 }
+

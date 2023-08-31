@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 
 @Composable
 fun SecondPage(
+    one: Int, two: Int,
     onBackPressed: () -> Unit
 ) {
     Scaffold(
@@ -30,7 +31,7 @@ fun SecondPage(
         }
     ) { paddingValues ->
         Column(modifier = Modifier.padding(paddingValues)) {
-            Text("Number is 0")
+            Text("${(one..two).random()}")
             Button(onClick = { onBackPressed() }) {
                 Text("Back to previous page")
             }

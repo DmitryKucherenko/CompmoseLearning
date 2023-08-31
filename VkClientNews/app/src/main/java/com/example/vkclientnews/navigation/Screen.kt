@@ -1,7 +1,6 @@
 package com.example.vkclientnews.navigation
 
 import android.net.Uri
-import androidx.compose.runtime.rememberUpdatedState
 import com.example.vkclientnews.domain.FeedPost
 import com.google.gson.Gson
 

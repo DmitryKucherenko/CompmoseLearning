@@ -11,11 +11,15 @@ class NavigationState(
 ) {
     fun navigateTo(route: String) {
         navHostController.navigate(route) {
-            popUpTo(navHostController.graph.findStartDestination().id) {
-                saveState = true
-            }
             launchSingleTop = true
-            restoreState = true
+        }
+    }
+
+    fun navigateToSecondPage(o:Int,t:Int){
+        navHostController.navigate(Screen.SecondPage.getRouteWithArgs(o,t)) {
+
+            launchSingleTop = true
+
         }
     }
 

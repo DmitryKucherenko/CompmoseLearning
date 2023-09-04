@@ -35,10 +35,15 @@ class MainActivity : AppCompatActivity() {
 
 
         }
-        getUsernameButton.setOnClickListener {
-            UsernameActivity.newIntent(this).apply {
-                startActivityForResult(this, RC_USERNAME)
+
+        val launcher = registerForActivityResult(contact){
+            if(!it.isNullOrBlank()){
+                usernameTextView.text = it
             }
+        }
+
+        getUsernameButton.setOnClickListener {
+           launcher.launch(UsernameActivity.newIntent(this))
         }
         getImageButton.setOnClickListener {
             Intent(Intent.ACTION_PICK).apply {

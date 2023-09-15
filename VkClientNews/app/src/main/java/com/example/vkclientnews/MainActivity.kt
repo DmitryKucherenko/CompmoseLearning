@@ -6,11 +6,10 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.SideEffect
 
 import androidx.lifecycle.ViewModelProvider
-import com.example.vkclientnews.ui.theme.ActivityResultTest
-import com.example.vkclientnews.ui.theme.MainScreen
-import com.example.vkclientnews.ui.theme.VkClientNewsTheme
+import com.example.vkclientnews.ui.theme.*
 import com.vk.api.sdk.VK
 import com.vk.api.sdk.auth.VKAuthenticationResult
 import com.vk.api.sdk.auth.VKScope
@@ -32,7 +31,10 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                     }
-                launcher.launch(listOf(VKScope.WALL))
+                SideEffect {
+                    launcher.launch(listOf(VKScope.WALL))
+                }
+
                 MainScreen()
             }
         }

@@ -7,8 +7,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.livedata.observeAsState
 
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.vkclientnews.ui.theme.*
 import com.vk.api.sdk.VK
 import com.vk.api.sdk.auth.VKAuthenticationResult
@@ -20,22 +22,27 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             VkClientNewsTheme {
+                val viewModel: MainViewModel = viewModel()
+                val authState = viewModel.authState.observeAsState(AuthState.Initial)
                 val launcher =
                     rememberLauncherForActivityResult(contract = VK.getVKAuthActivityResultContract()) {
-                        when (it) {
-                            is VKAuthenticationResult.Success -> {
-                                Log.d("MainActivity", "Success auth")
-                            }
-                            is VKAuthenticationResult.Failed -> {
-                                Log.d("MainActivity", "Failed auth")
-                            }
+                        viewModel.performAuthResult(it)
+                    }
+
+                when (authState.value) {
+                    is AuthState.Authorized -> {
+                         MainScreen()
+                    }
+                    is AuthState.NotAuthorized ->{
+                        LoginScreen {
+                            launcher.launch(listOf(VKScope.WALL))
                         }
                     }
-                SideEffect {
-                    launcher.launch(listOf(VKScope.WALL))
+                    else -> {
+
+                    }
                 }
 
-                MainScreen()
             }
         }
     }

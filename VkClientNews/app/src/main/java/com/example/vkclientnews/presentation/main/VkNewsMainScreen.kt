@@ -1,21 +1,18 @@
-package com.example.vkclientnews.ui.theme
+package com.example.vkclientnews.presentation.main
 
-import android.annotation.SuppressLint
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import com.example.vkclientnews.NewsFeedViewModel
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.vkclientnews.domain.FeedPost
 import com.example.vkclientnews.navigation.AppNavGraph
-import com.example.vkclientnews.navigation.Screen
 import com.example.vkclientnews.navigation.rememberNavigationState
+import com.example.vkclientnews.presentation.comments.CommentsScreen
+import com.example.vkclientnews.presentation.news.NewsFeedScreen
 
 @Composable
 fun MainScreen() {
@@ -60,7 +57,7 @@ fun MainScreen() {
         AppNavGraph(
             navHostController = navigationState.navHostController,
             newsFeedScreenContent = {
-                HomeScreen(
+                NewsFeedScreen(
                     paddingValues = paddingValues,
                     onCommentClickListener = {
                         navigationState.navigateToComments(it)

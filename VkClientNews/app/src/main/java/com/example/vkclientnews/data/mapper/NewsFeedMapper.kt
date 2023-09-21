@@ -32,7 +32,8 @@ class NewsFeedMapper {
                     StatisticItem(type = StatisticType.VIEWS, post.views.count),
                     StatisticItem(type = StatisticType.SHARES, post.reposts.count),
                     StatisticItem(type = StatisticType.COMMENTS, post.comments.count),
-                )
+                ),
+                isFovourite = post.isFavourite
             )
             result.add(feePost)
 

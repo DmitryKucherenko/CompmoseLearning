@@ -22,6 +22,7 @@ class NewsFeedMapper {
             } ?: break
             val feePost = FeedPost(
                 id = post.id,
+                communityId = post.communityId,
                 communityName = group.name,
                 publicationDate = mapTimestampToDate(post.date*1000),
                 communityImageUrl = group.imageUrl,

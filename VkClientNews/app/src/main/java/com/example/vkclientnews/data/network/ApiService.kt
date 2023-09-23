@@ -20,17 +20,17 @@ interface ApiService {
 
     @GET("likes.add?v=5.131&type=post")
     suspend fun addLike(
-        @Query("access token") token: String,
+        @Query("access_token") token: String,
         @Query("owner_id") ownerId: Long,
         @Query("item_id") postId: Long
     ):LikesCountResponseDto
 
     @GET("likes.delete?v=5.131&type=post")
     suspend fun deleteLike(
-        @Query("access token") token: String,
+        @Query("access_token") token: String,
         @Query("owner_id") ownerId: Long,
         @Query("item_id") postId: Long
-    ):LikesCountResponseDto
+    ): LikesCountResponseDto
 
 
 

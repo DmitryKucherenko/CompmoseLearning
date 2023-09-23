@@ -36,11 +36,7 @@ class NewsFeedRepository(application: Application) {
         return feedPosts
     }
 
-    fun loadNextRecomendations(){
-
-    }
-
-    private fun getAccessToken(): String {
+     private fun getAccessToken(): String {
         return token?.accessToken ?: throw java.lang.IllegalStateException("Token is null")
     }
 
@@ -58,12 +54,10 @@ class NewsFeedRepository(application: Application) {
                 postId = feedPost.id
             )
         }
-        val newsLikesCount = response.likes.count
+        val newLikesCount = response.likes.count
         val newStatistics = feedPost.statistics.toMutableList().apply {
-            removeIf {
-                it.type == StatisticType.LIKES
-            }
-            add(StatisticItem(type = StatisticType.LIKES, newsLikesCount))
+            removeIf { it.type == StatisticType.LIKES }
+            add(StatisticItem(type = StatisticType.LIKES, newLikesCount))
         }
         val newPost = feedPost.copy(statistics = newStatistics, isLiked = !feedPost.isLiked)
         val postIndex = _feedPosts.indexOf(feedPost)

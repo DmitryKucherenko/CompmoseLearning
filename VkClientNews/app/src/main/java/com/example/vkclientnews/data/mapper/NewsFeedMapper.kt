@@ -1,7 +1,9 @@
 package com.example.vkclientnews.data.mapper
 
+import com.example.vkclientnews.data.model.CommentsResponse
 import com.example.vkclientnews.data.model.NewsFeedResponseDto
 import com.example.vkclientnews.domain.FeedPost
+import com.example.vkclientnews.domain.PostComment
 import com.example.vkclientnews.domain.StatisticItem
 import com.example.vkclientnews.domain.StatisticType
 import java.text.SimpleDateFormat
@@ -24,7 +26,7 @@ class NewsFeedMapper {
                 id = post.id,
                 communityId = post.communityId,
                 communityName = group.name,
-                publicationDate = mapTimestampToDate(post.date*1000),
+                publicationDate = mapTimestampToDate(post.date),
                 communityImageUrl = group.imageUrl,
                 contentText = post.text,
                 contentImageUrl = post.attachments?.firstOrNull()?.photo?.photoUrls?.lastOrNull()?.url,
@@ -42,8 +44,30 @@ class NewsFeedMapper {
         return result
     }
 
+    fun mapResponseToPosts(
+        responseComment: CommentsResponse
+    ): List<PostComment> {
+        val result = mutableListOf<PostComment>()
+        val comments = responseComment.response.comments
+        val profiles = responseComment.response.profiles
+        for (comment in comments) {
+            if (comment.text.isBlank()) continue
+            val author =
+                profiles.firstOrNull { author -> author.id == comment.authorId } ?: continue
+            val postComment = PostComment(
+                id = comment.id,
+                authorName = "${author.firstName} ${author.lastName}",
+                authorAvatarUrl = author.photoUrl,
+                commentText = comment.text,
+                publicationDate = mapTimestampToDate(comment.dateComment)
+            )
+            result.add(postComment)
+        }
+        return result
+    }
+
     private fun mapTimestampToDate(timestamp:Long):String{
-        val date = Date(timestamp)
+        val date = Date(timestamp*1000)
         return SimpleDateFormat("dd MMMM yyyy, hh:mm", Locale.getDefault()).format(date)
     }
 }

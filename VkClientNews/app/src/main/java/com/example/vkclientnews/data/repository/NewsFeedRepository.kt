@@ -1,23 +1,28 @@
 package com.example.vkclientnews.data.repository
 
 import android.app.Application
+import androidx.compose.runtime.collectAsState
 import com.example.vkclientnews.data.mapper.NewsFeedMapper
 import com.example.vkclientnews.data.network.ApiFactory
 import com.example.vkclientnews.domain.FeedPost
+import com.example.vkclientnews.domain.NewsFeedResult
 import com.example.vkclientnews.domain.PostComment
 import com.example.vkclientnews.domain.StatisticItem
 import com.example.vkclientnews.domain.StatisticType
 import com.example.vkclientnews.extensions.mergeWith
+import com.example.vkclientnews.presentation.comments.CommentsScreenState
 import com.vk.api.sdk.VKPreferencesKeyValueStorage
 import com.vk.api.sdk.auth.VKAccessToken
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 
 class NewsFeedRepository(application: Application) {
     private val storage = VKPreferencesKeyValueStorage(application)
     private val token = VKAccessToken.restore(storage)
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
+    private val coroutineScope2 = CoroutineScope(Dispatchers.Default)
     private val nextDataNeededEvents = MutableSharedFlow<Unit>(replay = 1)
     private val refreshedListFlow = MutableSharedFlow<List<FeedPost>>()
 
@@ -37,7 +42,7 @@ class NewsFeedRepository(application: Application) {
 
     private val loadedListFlow = flow {
         nextDataNeededEvents.emit(Unit)
-        nextDataNeededEvents.collect{
+        nextDataNeededEvents.collect {
             val startFrom = nextFrom
             if (startFrom == null && feedPosts.isNotEmpty()) {
                 emit(feedPosts)
@@ -54,16 +59,21 @@ class NewsFeedRepository(application: Application) {
             emit(feedPosts)
         }
     }
+        .retry {
+            delay(RETRY_MILLIS)
+            true
+        }
 
     val recommendations: StateFlow<List<FeedPost>> = loadedListFlow
         .mergeWith(refreshedListFlow)
         .stateIn(
-        scope = coroutineScope,
-        started = SharingStarted.Lazily,
-        initialValue = feedPosts
-    )
+            scope = coroutineScope,
+            started = SharingStarted.Lazily,
+            initialValue = feedPosts
+        )
 
-    suspend fun loadNextData(){
+
+    suspend fun loadNextData() {
         nextDataNeededEvents.emit(Unit)
     }
 
@@ -107,10 +117,16 @@ class NewsFeedRepository(application: Application) {
     }
 
 
-    suspend fun loadComments(feedPost: FeedPost): List<PostComment> {
+    fun loadComments(feedPost: FeedPost):Flow<List<PostComment>> = flow {
         val response = apiService.loadComments(getAccessToken(), feedPost.communityId, feedPost.id)
-        _comments.addAll(mapper.mapResponseToPosts(response))
-        return comments
+        emit(mapper.mapResponseToPosts(response))
+    }.retry {
+        delay(RETRY_MILLIS)
+        true
+    }
+
+    companion object {
+        private const val RETRY_MILLIS = 3000L
     }
 
 }

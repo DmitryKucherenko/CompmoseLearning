@@ -1,7 +1,7 @@
 package com.example.vkclientnews.navigation
 
 import android.net.Uri
-import com.example.vkclientnews.domain.FeedPost
+import com.example.vkclientnews.domain.entity.FeedPost
 import com.google.gson.Gson
 
 sealed class Screen(

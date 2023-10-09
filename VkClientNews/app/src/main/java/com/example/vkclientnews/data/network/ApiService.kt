@@ -41,7 +41,7 @@ interface ApiService {
     )
 
     @GET("wall.getComments?v=5.131&extended=1&fields=photo_200")
-    suspend fun loadComments(
+    suspend fun getComments(
         @Query("access_token") token: String,
         @Query("owner_id") ownerId: Long,
         @Query("post_id") postId: Long

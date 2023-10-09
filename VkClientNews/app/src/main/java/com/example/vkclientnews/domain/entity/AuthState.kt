@@ -1,4 +1,4 @@
-package com.example.vkclientnews.presentation.main
+package com.example.vkclientnews.domain.entity
 
 sealed class AuthState {
     object Authorized : AuthState()

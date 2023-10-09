@@ -1,38 +1,28 @@
 package com.example.vkclientnews.presentation.main
 
 import android.app.Application
-import android.util.Log
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import com.example.vkclientnews.presentation.main.AuthState
-import com.vk.api.sdk.VK
-import com.vk.api.sdk.VKPreferencesKeyValueStorage
-import com.vk.api.sdk.auth.VKAccessToken
-import com.vk.api.sdk.auth.VKAuthenticationResult
+import androidx.lifecycle.*
+import com.example.vkclientnews.data.repository.NewsFeedRepository
+import com.example.vkclientnews.data.repository.NewsFeedRepositoryImpl
+import com.example.vkclientnews.domain.entity.AuthState
+import com.example.vkclientnews.domain.usecases.CheckAuthUseCase
+import com.example.vkclientnews.domain.usecases.GetAuthStateFlowUseCase
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MainViewModel (application: Application) : AndroidViewModel(
-    application
-) {
+class MainViewModel @Inject constructor(
+    private val getAuthStateFlowUseCase: GetAuthStateFlowUseCase,
+    private val checkAuthStateFlowUseCase: CheckAuthUseCase
+) : ViewModel() {
 
-    private val _authState = MutableLiveData<AuthState>(AuthState.Initial)
-    val authState: LiveData<AuthState> = _authState
+    var authState: StateFlow<AuthState> = getAuthStateFlowUseCase()
 
-    init {
-        val storage = VKPreferencesKeyValueStorage(application)
-        val token = VKAccessToken.restore(storage)
-        val loggedInt = token != null && token.isValid
-        Log.d("MainVewModel","Token: ${token?.accessToken}")
-        _authState.value = if (loggedInt) AuthState.Authorized else AuthState.NotAuthorized
-    }
-
-
-    fun performAuthResult(result: VKAuthenticationResult) {
-        if (result is VKAuthenticationResult.Success) {
-            _authState.value = AuthState.Authorized
-        } else {
-            _authState.value = AuthState.NotAuthorized
+    fun performAuthResult() {
+        viewModelScope.launch {
+            checkAuthStateFlowUseCase()
         }
     }
 

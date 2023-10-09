@@ -2,16 +2,17 @@ package com.example.vkclientnews.data.mapper
 
 import com.example.vkclientnews.data.model.CommentsResponse
 import com.example.vkclientnews.data.model.NewsFeedResponseDto
-import com.example.vkclientnews.domain.FeedPost
-import com.example.vkclientnews.domain.PostComment
-import com.example.vkclientnews.domain.StatisticItem
-import com.example.vkclientnews.domain.StatisticType
+import com.example.vkclientnews.domain.entity.FeedPost
+import com.example.vkclientnews.domain.entity.PostComment
+import com.example.vkclientnews.domain.entity.StatisticItem
+import com.example.vkclientnews.domain.entity.StatisticType
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import javax.inject.Inject
 import kotlin.math.absoluteValue
 
-class NewsFeedMapper {
+class NewsFeedMapper @Inject constructor(){
     fun mapResponseToPosts(
         responseDto: NewsFeedResponseDto
     ): List<FeedPost> {

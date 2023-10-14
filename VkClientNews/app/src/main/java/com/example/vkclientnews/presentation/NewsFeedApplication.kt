@@ -1,6 +1,7 @@
 package com.example.vkclientnews.presentation
 
 import android.app.Application
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import com.example.vkclientnews.di.ApplicationComponent
@@ -17,5 +18,6 @@ class NewsFeedApplication: Application() {
 
 @Composable
 fun getApplicationComponent():ApplicationComponent{
+    Log.d("RECOMPOSITION_TAG","getApplicationComponent")
     return (LocalContext.current.applicationContext as NewsFeedApplication).component
 }

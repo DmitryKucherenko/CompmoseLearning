@@ -16,7 +16,7 @@ import com.example.vkclientnews.presentation.comments.CommentsScreen
 import com.example.vkclientnews.presentation.news.NewsFeedScreen
 
 @Composable
-fun MainScreen(viewModelFactory: ViewModelFactory) {
+fun MainScreen() {
     val navigationState = rememberNavigationState()
 
     Scaffold(
@@ -59,7 +59,6 @@ fun MainScreen(viewModelFactory: ViewModelFactory) {
             navHostController = navigationState.navHostController,
             newsFeedScreenContent = {
                 NewsFeedScreen(
-                    viewModelFactory,
                     paddingValues = paddingValues,
                     onCommentClickListener = {
                         navigationState.navigateToComments(it)

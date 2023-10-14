@@ -11,6 +11,7 @@ import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,18 +19,36 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.vkclientnews.domain.entity.FeedPost
 import com.example.vkclientnews.presentation.ViewModelFactory
+import com.example.vkclientnews.presentation.getApplicationComponent
 import com.example.vkclientnews.ui.theme.DarkBlue
 
 
 @Composable
 fun NewsFeedScreen(
-    viewModelFactory: ViewModelFactory,
+
     paddingValues: PaddingValues,
     onCommentClickListener: (FeedPost) -> Unit
 ) {
-    val viewModel: NewsFeedViewModel = viewModel(factory = viewModelFactory)
+    val component = getApplicationComponent()
+    val viewModel: NewsFeedViewModel = viewModel(factory = component.getViewModelFactory())
     val screenState = viewModel.screenState.collectAsState(NewsFeedScreenState.Initial)
+    NewsFeedScreenContent(
+        screenState = screenState,
+        paddingValues = paddingValues,
+        onCommentClickListener = onCommentClickListener,
+        viewModel = viewModel
+    )
 
+
+}
+
+@Composable
+private fun NewsFeedScreenContent(
+    screenState: State<NewsFeedScreenState>,
+    paddingValues: PaddingValues,
+    onCommentClickListener: (FeedPost) -> Unit,
+    viewModel: NewsFeedViewModel
+) {
     when (val currentState = screenState.value) {
         is NewsFeedScreenState.Posts -> {
             FeedPosts(
@@ -43,7 +62,7 @@ fun NewsFeedScreen(
 
         NewsFeedScreenState.Initial -> {}
         NewsFeedScreenState.Loading -> {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(color = DarkBlue)
             }
         }

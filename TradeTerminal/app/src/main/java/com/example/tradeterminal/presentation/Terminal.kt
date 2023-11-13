@@ -22,6 +22,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tradeterminal.R
+import com.example.tradeterminal.data.Bar
+import java.util.*
 import kotlin.math.roundToInt
 
 private const val MIN_VISIBLE_BARS_COUNT = 20
@@ -42,7 +44,8 @@ fun Terminal(
                 terminalState = terminalState,
                 onTerminalStateChanger = {
                     terminalState.value = it
-                }
+                },
+                timeFrame = currentState.timeFrame
             )
 
 
@@ -54,7 +57,9 @@ fun Terminal(
                     lastPrice = it.close
                 )
             }
-            TimeFrames(selectedFrame = currentState.timeFrame, onTimeFrameSelected = {viewModel.loadBarList(it)})
+            TimeFrames(
+                selectedFrame = currentState.timeFrame,
+                onTimeFrameSelected = { viewModel.loadBarList(it) })
 
         }
 
@@ -80,15 +85,15 @@ fun Terminal(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TimeFrames(
-    selectedFrame:TimeFrame,
+    selectedFrame: TimeFrame,
     onTimeFrameSelected: (TimeFrame) -> Unit
 ) {
     Row(
         modifier = Modifier.wrapContentSize(),
         horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        TimeFrame.values().forEach {timeFrame->
-            val labelResId = when(timeFrame){
+        TimeFrame.values().forEach { timeFrame ->
+            val labelResId = when (timeFrame) {
                 TimeFrame.MIN_5 -> R.string.timeframe_5_minutes
                 TimeFrame.MIN_15 -> R.string.timeframe_15_minutes
                 TimeFrame.MIN_30 -> R.string.timeframe_30_minutes
@@ -96,25 +101,27 @@ private fun TimeFrames(
             }
 
             val isSelected = timeFrame == selectedFrame
-           AssistChip(
-               onClick = { onTimeFrameSelected(timeFrame)},
-               label = { Text(text = stringResource(id = labelResId))},
-               colors = AssistChipDefaults.assistChipColors(
-                   containerColor =if(isSelected)Color.White else Color.Black,
-                   labelColor =  if(isSelected)Color.Black else Color.White
-               )
+            AssistChip(
+                onClick = { onTimeFrameSelected(timeFrame) },
+                label = { Text(text = stringResource(id = labelResId)) },
+                colors = AssistChipDefaults.assistChipColors(
+                    containerColor = if (isSelected) Color.White else Color.Black,
+                    labelColor = if (isSelected) Color.Black else Color.White
+                )
 
-           )
+            )
         }
     }
 
 }
 
+@OptIn(ExperimentalTextApi::class)
 @Composable
 private fun Chart(
     modifier: Modifier = Modifier,
     terminalState: State<TerminalState>,
-    onTerminalStateChanger: (TerminalState) -> Unit
+    onTerminalStateChanger: (TerminalState) -> Unit,
+    timeFrame: TimeFrame
 
 ) {
     val currentState = terminalState.value
@@ -134,6 +141,7 @@ private fun Chart(
 
     }
 
+    val textMeasure = rememberTextMeasurer()
 
     Canvas(
         modifier = modifier
@@ -165,6 +173,17 @@ private fun Chart(
         translate(left = currentState.scrolledBy) {
             currentState.barList.forEachIndexed { index, bar ->
                 val offsetX = size.width - index * currentState.barWidth
+                drawTimeDelimiter(
+                    bar = bar,
+                    nextBar = if (index < currentState.barList.size - 1) {
+                        currentState.barList[index + 1]
+                    } else {
+                        null
+                    },
+                    timeFrame = timeFrame,
+                    offsetX = offsetX,
+                    textMeasure = textMeasure
+                )
                 drawLine(
                     color = Color.White,
                     start = Offset(offsetX, size.height - (bar.low - min) * pxPerPoint),
@@ -215,6 +234,67 @@ private fun Prices(
     }
 
 
+}
+
+@OptIn(ExperimentalTextApi::class)
+private fun DrawScope.drawTimeDelimiter(
+    bar: Bar,
+    nextBar: Bar?,
+    timeFrame: TimeFrame,
+    offsetX: Float,
+    textMeasure: TextMeasurer
+) {
+    val calendar = bar.calendar
+    val minutes = calendar.get(Calendar.MINUTE)
+    val hours = calendar.get(Calendar.HOUR_OF_DAY)
+    val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+    val shouldDrawDelimiter = when (timeFrame) {
+
+        TimeFrame.MIN_15 -> {
+            minutes == 0 && hours % 2 == 0
+        }
+        TimeFrame.MIN_5 -> TODO()
+        TimeFrame.MIN_30, TimeFrame.HOUR_1 -> {
+            val nextBarDay = nextBar?.calendar?.get(Calendar.DAY_OF_MONTH)
+            day != nextBarDay
+        }
+    }
+    if (!shouldDrawDelimiter) return
+    drawLine(
+        color = Color.White.copy(alpha = 0.5f),
+        start = Offset(offsetX, 0f),
+        end = Offset(offsetX, size.height),
+        strokeWidth = 1f,
+        pathEffect = PathEffect.dashPathEffect(
+            intervals = floatArrayOf(4.dp.toPx(), 4.dp.toPx())
+        )
+    )
+
+    val nameOfMonth = calendar.getDisplayName(
+        Calendar.MONTH, Calendar.SHORT, Locale.getDefault()
+    )
+
+    val text = when (timeFrame) {
+        TimeFrame.MIN_5, TimeFrame.MIN_15 -> {
+            String.format("%02d:00", hours)
+        }
+        TimeFrame.MIN_30, TimeFrame.HOUR_1 -> {
+            String.format("%s %s",day, nameOfMonth)
+        }
+    }
+    val textLayoutResult = textMeasure.measure(
+        text = text,
+        style = TextStyle(
+            color = Color.White,
+            fontSize = 12.sp
+        )
+    )
+
+    drawText(
+        textLayoutResult = textLayoutResult,
+        topLeft = Offset(offsetX - textLayoutResult.size.width / 2, size.height)
+    )
 }
 
 
